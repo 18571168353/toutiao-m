@@ -1,7 +1,9 @@
 <template>
   <div class="login-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <van-icon slot="left" name="cross" @click="$router.back()" />
+    </van-nav-bar>
     <!-- /导航栏 -->
 
     <!-- 登录表单 -->
@@ -112,6 +114,8 @@ export default {
         this.$store.commit('setUser', data.data)
         this.$toast.success('登录成功')
         // console.log('登录成功', res)
+        // 登录成功
+        this.$router.push('my')
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('登录失败,请稍后重试!')
@@ -159,9 +163,9 @@ export default {
   .send-sms-btn {
     display: flex;
     align-items: center;
-    width: 152px;
+    justify-content: center;
+    width: 178px;
     height: 46px;
-    // line-height: 46px;
     background-color: #ededed;
     font-size: 22px;
     color: #666;
