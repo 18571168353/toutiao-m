@@ -2,7 +2,12 @@
   <div class="login-container">
     <!-- 导航栏 -->
     <van-nav-bar class="page-nav-bar" title="登录">
-      <van-icon slot="left" name="cross" @click="$router.back()" />
+      <van-icon
+        slot="left"
+        v-if="$route.query.redirect"
+        name="cross"
+        @click="$router.back()"
+      />
     </van-nav-bar>
     <!-- /导航栏 -->
 
@@ -67,7 +72,7 @@ export default {
   data() {
     return {
       user: {
-        mobile: '13911111111', // 手机号
+        mobile: '13911111113', // 手机号
         code: '246810' // 验证码
       },
       userFormRules: {
@@ -115,7 +120,7 @@ export default {
         this.$toast.success('登录成功')
         // console.log('登录成功', res)
         // 登录成功
-        this.$router.push('my')
+        this.$router.push(this.$route.query.redirect || '/')
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('登录失败,请稍后重试!')

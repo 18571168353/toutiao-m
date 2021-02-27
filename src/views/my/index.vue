@@ -4,13 +4,8 @@
     <div v-if="user" class="header user-info">
       <div class="base-info">
         <div class="left">
-          <van-image
-            class="avatar"
-            round
-            fit="cover"
-            :src="userInfo.photo"
-          />
-          <span class="name">{{userInfo.name}}</span>
+          <van-image class="avatar" round fit="cover" :src="userInfo.photo" />
+          <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
           <van-button size="mini" round>编辑资料</van-button>
@@ -18,19 +13,19 @@
       </div>
       <div class="data-status">
         <div class="data-item">
-          <span class="count">{{userInfo.art_count}}</span>
+          <span class="count">{{ userInfo.art_count }}</span>
           <span class="text">头条</span>
         </div>
         <div class="data-item">
-          <span class="count">{{userInfo.follow_count}}</span>
+          <span class="count">{{ userInfo.follow_count }}</span>
           <span class="text">关注</span>
         </div>
         <div class="data-item">
-          <span class="count">{{userInfo.fans_count}}</span>
+          <span class="count">{{ userInfo.fans_count }}</span>
           <span class="text">粉丝</span>
         </div>
         <div class="data-item">
-          <span class="count">{{userInfo.like_count}}</span>
+          <span class="count">{{ userInfo.like_count }}</span>
           <span class="text">获赞</span>
         </div>
       </div>
@@ -38,7 +33,17 @@
 
     <!-- 未登录 -->
     <div v-else class="header not-login">
-      <div class="login-btn" @click="$router.push('/login')">
+      <div
+        class="login-btn"
+        @click="
+          $router.push({
+            name: 'login',
+            query: {
+              redirect: '/my'
+            }
+          })
+        "
+      >
         <img class="mobile-img" src="~@/assets/mobile.png" alt="" />
         <span class="text">登录 / 注册</span>
       </div>
