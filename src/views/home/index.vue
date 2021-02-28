@@ -23,29 +23,57 @@
         ><article-list :channel="channel"
       /></van-tab>
       <div slot="nav-right" class="placeholder"></div>
-      <div slot="nav-right" class="hamburger-btn">
+      <div
+        slot="nav-right"
+        class="hamburger-btn"
+        @click="isEditChannelShow = true"
+      >
         <i class="toutiao toutiao-gengduo"></i>
       </div>
     </van-tabs>
+    <!-- 频道列表 -->
+    <!-- 频道编辑 -->
+    <van-popup
+      class="edit-channel-popup"
+      v-model="isEditChannelShow"
+      position="bottom"
+      :style="{ height: '100%' }"
+      closeable
+      close-icon-position="top-left"
+    >
+      <channel-edit
+        :my-channels="channels"
+        :active="active"
+        @update-active="onUpdateActive"
+      />
+    </van-popup>
+    <!-- /频道编辑 -->
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage'
 export default {
   name: 'HomeIndex',
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   props: {},
   data() {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isEditChannelShow: true // 这里我们先设置为 true 就能看到弹窗的页面了
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   watch: {},
   created() {
     this.loadChannels()
@@ -55,12 +83,33 @@ export default {
     // 获取频道列表数据
     async loadChannels() {
       try {
-        const { data } = await getUserChannels()
-        this.channels = data.data.channels
-        console.log(data)
+        // const { data } = await getUserChannels()
+        // this.channels = data.data.channels
+        // console.log(data)
+        let channels = []
+        if (this.user) {
+          // 已登录
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        } else {
+          // 未登录
+          const localChannels = setItem('YOUYIAO_CHANNELS')
+          if (localChannels) {
+            channels = localChannels
+          } else {
+            // 如果没有
+            const { data } = await getUserChannels()
+            channels = data.data.channels
+          }
+        }
+        this.channels = channels
       } catch (err) {
         this.$toast('获取频道列表数据失败!')
       }
+    },
+    onUpdateActive(index, isChannelEditShow = true) {
+      this.active = index
+      this.isEditChannelShow = isChannelEditShow
     }
   }
 }
@@ -82,6 +131,10 @@ export default {
     .van-icon {
       font-size: 32px;
     }
+  }
+  .edit-channel-popup {
+    padding-top: 100px;
+    box-sizing: border-box;
   }
 }
 /deep/ .channel-tabs {
