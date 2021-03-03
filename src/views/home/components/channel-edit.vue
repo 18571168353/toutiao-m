@@ -138,7 +138,7 @@ export default {
         }
       } else {
         // 未登录,将数据储存到本地
-        setItem('YOUYIAO_CHANNELS', this.myChannels)
+        setItem('TOUYIAO_CHANNELS', this.myChannels)
       }
     },
     // 点击我的频道触发事件
@@ -168,7 +168,7 @@ export default {
           // 已登录,将数据更新到线上
         } else {
           // 未登录,将数据更新到本地
-          setItem('YOUYIAO_CHANNELS', this.myChannels)
+          setItem('TOUYIAO_CHANNELS', this.myChannels)
         }
       } catch (err) {
         this.$toast('操作失败,请稍后重试!')

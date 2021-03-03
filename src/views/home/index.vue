@@ -9,6 +9,7 @@
         size="small"
         round
         icon="search"
+        to="/search"
         >搜索</van-button
       >
     </van-nav-bar>
@@ -56,7 +57,7 @@ import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
 import ChannelEdit from './components/channel-edit'
 import { mapState } from 'vuex'
-import { setItem } from '@/utils/storage'
+import { getItem } from '@/utils/storage'
 export default {
   name: 'HomeIndex',
   components: {
@@ -68,7 +69,7 @@ export default {
     return {
       active: 0,
       channels: [],
-      isEditChannelShow: true // 这里我们先设置为 true 就能看到弹窗的页面了
+      isEditChannelShow: false // 这里我们先设置为 true 就能看到弹窗的页面了
     }
   },
   computed: {
@@ -93,7 +94,7 @@ export default {
           channels = data.data.channels
         } else {
           // 未登录
-          const localChannels = setItem('YOUYIAO_CHANNELS')
+          const localChannels = getItem('TOUYIAO_CHANNELS')
           if (localChannels) {
             channels = localChannels
           } else {
