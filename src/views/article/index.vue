@@ -12,13 +12,13 @@
 
     <div class="main-wrap">
       <!-- 加载中 -->
-      <div class="loading-wrap">
+      <div class="loading-wrap" v-if="isLoading">
         <van-loading color="#3296fa" vertical>加载中</van-loading>
       </div>
       <!-- /加载中 -->
 
       <!-- 加载完成-文章详情 -->
-      <div class="article-detail">
+      <div class="article-detail" v-else-if="article.title">
         <!-- 文章标题 -->
         <h1 class="article-title">{{ article.title }}</h1>
         <!-- /文章标题 -->
@@ -38,39 +38,46 @@
           </div>
           <van-button
             class="follow-btn"
+            round
+            size="small"
+            v-if="article.is_followed"
+            >已关注</van-button
+          >
+          <van-button
+            class="follow-btn"
             type="info"
             color="#3296fa"
             round
             size="small"
             icon="plus"
+            v-else
             >关注</van-button
           >
-          <!-- <van-button
-            class="follow-btn"
-            round
-            size="small"
-          >已关注</van-button> -->
         </van-cell>
         <!-- /用户信息 -->
 
         <!-- 文章内容 -->
-        <div class="article-content" v-html="article.content"></div>
+        <div
+          class="article-content markdown-body"
+          v-html="article.content"
+          ref="article-content"
+        ></div>
         <van-divider>正文结束</van-divider>
       </div>
       <!-- /加载完成-文章详情 -->
 
       <!-- 加载失败：404 -->
-      <div class="error-wrap">
+      <div class="error-wrap" v-else-if="errStatus === 404">
         <van-icon name="failure" />
         <p class="text">该资源不存在或已删除！</p>
       </div>
       <!-- /加载失败：404 -->
 
       <!-- 加载失败：其它未知错误（例如网络原因或服务端异常） -->
-      <div class="error-wrap">
+      <div class="error-wrap" v-else>
         <van-icon name="failure" />
         <p class="text">内容加载失败！</p>
-        <van-button class="retry-btn">点击重试</van-button>
+        <van-button class="retry-btn" @click="loadArticle">点击重试</van-button>
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
@@ -91,6 +98,7 @@
 
 <script>
 import { getArticleById } from '@/api/article'
+import { ImagePreview } from 'vant'
 export default {
   name: 'ArticleIndex',
   components: {},
@@ -102,7 +110,10 @@ export default {
   },
   data() {
     return {
-      article: {}
+      article: {},
+      // 展示
+      isLoading: true,
+      errStatus: 0
     }
   },
   computed: {},
@@ -114,23 +125,61 @@ export default {
   methods: {
     // 获取文章详情
     async loadArticle() {
+      this.loading = true
       try {
         const { data } = await getArticleById(this.articleId)
         console.log(data)
+
+        // 模拟失败
+        // if (Math.random() > 0.5) {
+        //   JSON.parse('hjdsbfsdhfj')
+        // }
+
         this.article = data.data
+        // 初始化图片点击预览
+        setTimeout(() => {
+          this.previewImage()
+          // console.log(this.$refs['article-content'])
+        }, 0)
       } catch (err) {
         console.log('数据获取失败!请稍后在试!', err)
+        // 加载失败 404
+        if (err.response && err.response.status === 404) {
+          this.errStatus = 404
+        }
+        this.$toast('获取失败')
       }
+      // 加载完成
+      this.isLoading = false
     },
     // 返回
     onClickLeft() {
       this.$router.back()
+    },
+    // 得到所有的image节点
+    previewImage() {
+      const articleContent = this.$refs['article-content']
+      const imgs = articleContent.querySelectorAll('img')
+      // console.log(imgs)
+      const images = []
+      imgs.forEach((img, index) => {
+        images.push(img.src)
+        img.onclick = () => {
+          ImagePreview({
+            // 预览图片地址数组
+            images,
+            // 起始位置从0开始
+            startPosition: index
+          })
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+@import './github-markdown.css';
 .article-container {
   .main-wrap {
     position: fixed;

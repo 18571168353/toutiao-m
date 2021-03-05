@@ -13,6 +13,7 @@ const request = axios.create({
     function(data) {
       try {
         // 如果转换成功则返回转换的数据结果
+        // data就是后端返回的原始数据
         return jsonBig.parse(data)
       } catch (err) {
         // 如果转换失败，则包装为统一数据格式并返回

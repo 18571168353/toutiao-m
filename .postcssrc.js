@@ -19,7 +19,8 @@ module.exports = {
         return file.indexOf('vant') !== -1 ? 37.5 : 75
       },
       // rootValue: 37.5,
-      propList: ['*']
+      propList: ['*'],
+      exclude: 'github-markdown'
     }
   }
 }
