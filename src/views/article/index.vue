@@ -37,9 +37,9 @@
             {{ article.pubdate | relativeTime }}
           </div>
           <follow-user
-          class="follow-btn"
-          :user_id="article.aut_id"
-          v-model="article.is_followed"
+            class="follow-btn"
+            :user_id="article.aut_id"
+            v-model="article.is_followed"
           >
           </follow-user>
           <!-- <follow-user
@@ -80,6 +80,30 @@
           ref="article-content"
         ></div>
         <van-divider>正文结束</van-divider>
+        <!-- 底部区域 -->
+        <div class="article-bottom">
+          <van-button class="comment-btn" type="default" round size="small"
+            >写评论</van-button
+          >
+          <van-icon name="comment-o" info="123" color="#777" />
+          <!-- 收藏 -->
+          <collect-article
+            class="btn-item"
+            v-model="article.is_collected"
+            :article-id="article.art_id"
+          />
+          <!-- 收藏 -->
+
+          <!-- 点赞 -->
+          <like-article
+            class="btn-item"
+            v-model="article.attitude"
+            :article-id="article.art_id"
+          />
+          <!-- 点赞 -->
+          <van-icon name="share" color="#777777"></van-icon>
+        </div>
+        <!-- /底部区域 -->
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -98,29 +122,19 @@
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
-
-    <!-- 底部区域 -->
-    <div class="article-bottom">
-      <van-button class="comment-btn" type="default" round size="small"
-        >写评论</van-button
-      >
-      <van-icon name="comment-o" info="123" color="#777" />
-      <van-icon color="#777" name="star-o" />
-      <van-icon color="#777" name="good-job-o" />
-      <van-icon name="share" color="#777777"></van-icon>
-    </div>
-    <!-- /底部区域 -->
   </div>
 </template>
 
 <script>
 import { getArticleById } from '@/api/article'
 import { ImagePreview } from 'vant'
-import { addFollow, deleteFollow } from '@/api/user'
+// import { addFollow, deleteFollow } from '@/api/user'
 import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-article'
 export default {
   name: 'ArticleIndex',
-  components: { FollowUser },
+  components: { FollowUser, CollectArticle, LikeArticle },
   props: {
     articleId: {
       type: [Number, String],
@@ -193,31 +207,31 @@ export default {
           })
         }
       })
-    },
-    async onFollow() {
-      this.followLoading = true
-      try {
-        // 已关注
-        if (this.article.is_followed) {
-          // 取消关注
-          await deleteFollow(this.article.aut_id)
-          this.article.is_followed = false
-        } else {
-          // 未关注
-          // 添加关注
-          await addFollow(this.article.aut_id)
-          this.article.is_followed = true
-        }
-        // this.article.is_followed = !this.article.is_followed
-      } catch (err) {
-        let message = '操作失败,请重试!'
-        if (err.response && err.response.status === 400) {
-          message = '你不能自己关注你自己!'
-        }
-        this.$toast(message)
-      }
-      this.followLoading = false
     }
+    // async onFollow() {
+    //   this.followLoading = true
+    //   try {
+    //     // 已关注
+    //     if (this.article.is_followed) {
+    //       // 取消关注
+    //       await deleteFollow(this.article.aut_id)
+    //       this.article.is_followed = false
+    //     } else {
+    //       // 未关注
+    //       // 添加关注
+    //       await addFollow(this.article.aut_id)
+    //       this.article.is_followed = true
+    //     }
+    //     // this.article.is_followed = !this.article.is_followed
+    //   } catch (err) {
+    //     let message = '操作失败,请重试!'
+    //     if (err.response && err.response.status === 400) {
+    //       message = '你不能自己关注你自己!'
+    //     }
+    //     this.$toast(message)
+    //   }
+    //   this.followLoading = false
+    // }
   }
 }
 </script>
@@ -289,7 +303,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    .van-icon {
+    /deep/.van-icon {
       font-size: 122px;
       color: #b4b4b4;
     }
