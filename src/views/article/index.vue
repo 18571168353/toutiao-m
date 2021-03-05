@@ -36,11 +36,26 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | relativeTime }}
           </div>
-          <van-button
+          <follow-user
+          class="follow-btn"
+          :user_id="article.aut_id"
+          v-model="article.is_followed"
+          >
+          </follow-user>
+          <!-- <follow-user
+            class="follow-btn"
+            :is_followed="article.is_followed"
+            :user_id="article.aut_id"
+            @update-follow="article.is_followed = $event"
+          >
+          </follow-user> -->
+          <!-- <van-button
             class="follow-btn"
             round
             size="small"
+            @click="onFollow"
             v-if="article.is_followed"
+            :loading="followLoading"
             >已关注</van-button
           >
           <van-button
@@ -50,9 +65,11 @@
             round
             size="small"
             icon="plus"
+            :loading="followLoading"
+            @click="onFollow"
             v-else
             >关注</van-button
-          >
+          > -->
         </van-cell>
         <!-- /用户信息 -->
 
@@ -99,9 +116,11 @@
 <script>
 import { getArticleById } from '@/api/article'
 import { ImagePreview } from 'vant'
+import { addFollow, deleteFollow } from '@/api/user'
+import FollowUser from '@/components/follow-user'
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: { FollowUser },
   props: {
     articleId: {
       type: [Number, String],
@@ -113,7 +132,8 @@ export default {
       article: {},
       // 展示
       isLoading: true,
-      errStatus: 0
+      errStatus: 0,
+      followLoading: false
     }
   },
   computed: {},
@@ -173,6 +193,30 @@ export default {
           })
         }
       })
+    },
+    async onFollow() {
+      this.followLoading = true
+      try {
+        // 已关注
+        if (this.article.is_followed) {
+          // 取消关注
+          await deleteFollow(this.article.aut_id)
+          this.article.is_followed = false
+        } else {
+          // 未关注
+          // 添加关注
+          await addFollow(this.article.aut_id)
+          this.article.is_followed = true
+        }
+        // this.article.is_followed = !this.article.is_followed
+      } catch (err) {
+        let message = '操作失败,请重试!'
+        if (err.response && err.response.status === 400) {
+          message = '你不能自己关注你自己!'
+        }
+        this.$toast(message)
+      }
+      this.followLoading = false
     }
   }
 }
