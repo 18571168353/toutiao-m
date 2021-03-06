@@ -8,10 +8,10 @@
       error-text="加载失败,请稍后重试!"
       @load="onLoad"
     >
-      <van-cell
+      <comment-item
         v-for="(item, index) in list"
         :key="index"
-        :title="item.content"
+        :comment="item"
       />
     </van-list>
   </div>
@@ -19,18 +19,23 @@
 
 <script>
 import { getComments } from '@/api/comment'
+import CommentItem from './comment-item'
 export default {
   name: 'CommentList',
-  components: {},
+  components: { CommentItem },
   props: {
     source: {
       type: [Number, String, Object],
       required: true
+    },
+    list: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     return {
-      list: [],
+      // list: [],
       loading: false,
       finished: false,
       offset: null,
@@ -40,7 +45,9 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    this.onLoad()
+  },
   mounted() {},
   methods: {
     async onLoad() {
@@ -53,9 +60,11 @@ export default {
           limit: this.limit // 获取的评论数据个数，不传表示采用后端服务设定的默认每页数据量
         })
         // 2将数据添加到列表
-        // console.log(data)
+        console.log(data)
         const { results } = data.data
         this.list.push(...results)
+        // 将文章评论数总量传递到外部
+        this.$emit('onload-success', data.data)
         // 3将loading设置为false
         this.loading = false
         // 4判断是否还有数据 有:更新获取下一列的数据页码

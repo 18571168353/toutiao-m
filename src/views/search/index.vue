@@ -24,6 +24,7 @@
     <search-suggestion
       v-else-if="searchText"
       :search-text="searchText"
+      @search="onSearch"
     ></search-suggestion>
     <!-- 联想建议 -->
 

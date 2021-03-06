@@ -10,8 +10,8 @@
       <van-icon name="delete" v-else @click="isDeleteShow = true" />
     </van-cell>
     <van-cell
-      :title="item"
       v-for="(item, index) in searchHistories"
+      :title="item"
       :key="index"
       @click="onSearchItemClick(item, index)"
     >

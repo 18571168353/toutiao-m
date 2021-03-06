@@ -83,16 +83,23 @@
 
         <!-- 文章评论列表 -->
         <comment-list
-        :source="article.art_id"
+          :source="article.art_id"
+          :list="commentList"
+          @onload-success="totalCommentCount = $event.total_count"
         />
         <!-- 文章评论列表 -->
 
         <!-- 底部区域 -->
         <div class="article-bottom">
-          <van-button class="comment-btn" type="default" round size="small"
+          <van-button
+            class="comment-btn"
+            type="default"
+            round
+            size="small"
+            @click="isPostShow = true"
             >写评论</van-button
           >
-          <van-icon name="comment-o" info="123" color="#777" />
+          <van-icon name="comment-o" :info="totalCommentCount" color="#777" />
           <!-- 收藏 -->
           <collect-article
             class="btn-item"
@@ -111,6 +118,13 @@
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
+        <!-- 评论弹出层 -->
+        <van-popup v-model="isPostShow" closeable position="bottom">
+          <comment-post
+            :target="article.art_id"
+            @post-success="OnPostSuccess"
+          />
+        </van-popup>
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -140,9 +154,16 @@ import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
 import CommentList from './components/comments-list'
+import CommentPost from './components/comment-post'
 export default {
   name: 'ArticleIndex',
-  components: { FollowUser, CollectArticle, LikeArticle, CommentList },
+  components: {
+    FollowUser,
+    CollectArticle,
+    LikeArticle,
+    CommentList,
+    CommentPost
+  },
   props: {
     articleId: {
       type: [Number, String],
@@ -155,7 +176,10 @@ export default {
       // 展示
       isLoading: true,
       errStatus: 0,
-      followLoading: false
+      followLoading: false,
+      totalCommentCount: 0,
+      isPostShow: false,
+      commentList: [] // 评论列表
     }
   },
   computed: {},
@@ -215,31 +239,11 @@ export default {
           })
         }
       })
+    },
+    OnPostSuccess(data) {
+      this.isPostShow = false
+      this.commentList.unshift(data.new_obj)
     }
-    // async onFollow() {
-    //   this.followLoading = true
-    //   try {
-    //     // 已关注
-    //     if (this.article.is_followed) {
-    //       // 取消关注
-    //       await deleteFollow(this.article.aut_id)
-    //       this.article.is_followed = false
-    //     } else {
-    //       // 未关注
-    //       // 添加关注
-    //       await addFollow(this.article.aut_id)
-    //       this.article.is_followed = true
-    //     }
-    //     // this.article.is_followed = !this.article.is_followed
-    //   } catch (err) {
-    //     let message = '操作失败,请重试!'
-    //     if (err.response && err.response.status === 400) {
-    //       message = '你不能自己关注你自己!'
-    //     }
-    //     this.$toast(message)
-    //   }
-    //   this.followLoading = false
-    // }
   }
 }
 </script>
