@@ -6,12 +6,14 @@
       finished-text="没有更多了"
       :error="error"
       error-text="加载失败,请稍后重试!"
+      :immediate-check="false"
       @load="onLoad"
     >
       <comment-item
         v-for="(item, index) in list"
         :key="index"
         :comment="item"
+        @reply-click="$emit('reply-click', $event)"
       />
     </van-list>
   </div>
@@ -31,6 +33,13 @@ export default {
     list: {
       type: Array,
       default: () => []
+    },
+    type: {
+      type: String,
+      validator(value) {
+        return ['a', 'c'].includes(value)
+      },
+      default: 'a'
     }
   },
   data() {
@@ -46,6 +55,7 @@ export default {
   computed: {},
   watch: {},
   created() {
+    this.loading = true
     this.onLoad()
   },
   mounted() {},
@@ -54,7 +64,7 @@ export default {
       try {
         // 1请求获取数据
         const { data } = await getComments({
-          type: 'a', // 评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
+          type: this.type, // 评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
           source: this.source.toString(), // 源id，文章id或评论id
           offset: this.offset, // 获取评论数据的偏移量，值为评论id，表示从此id的数据向后取，不传表示从第一页开始读取数据
           limit: this.limit // 获取的评论数据个数，不传表示采用后端服务设定的默认每页数据量

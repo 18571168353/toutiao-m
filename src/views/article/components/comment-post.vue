@@ -21,6 +21,12 @@ import { addComment } from '@/api/comment'
 export default {
   name: 'CommentPost',
   components: {},
+  inject: {
+    articleId: {
+      type: [Number, String, Object],
+      default: null
+    }
+  },
   props: {
     target: {
       type: [Number, String, Object],
@@ -47,7 +53,7 @@ export default {
         const { data } = await addComment({
           target: this.target,
           content: this.message,
-          art_id: null
+          art_id: this.articleId ? this.articleId.toString() : this.articleId
         })
         console.log(data)
         this.message = ''
