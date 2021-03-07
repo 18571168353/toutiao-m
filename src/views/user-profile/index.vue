@@ -40,7 +40,11 @@
     <!-- 编辑昵称弹层 -->
     <!-- 编辑性别 -->
     <van-popup v-model="isUpdateGnederShow" position="bottom">
-      编辑性别
+      <update-gender
+        @close="isUpdateGnederShow = false"
+        v-if="isUpdateGnederShow"
+        v-model="user.gender"
+      />
     </van-popup>
     <!-- 编辑性别 -->
   </div>
@@ -49,10 +53,12 @@
 <script>
 import { getUserProfile } from '@/api/user.js'
 import UpdateName from './components/update-name'
+import UpdateGender from './components/update-gender'
 export default {
   name: 'UserProfile',
   components: {
-    UpdateName
+    UpdateName,
+    UpdateGender
   },
   props: {},
   data() {
