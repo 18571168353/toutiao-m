@@ -1,32 +1,34 @@
 <template>
-  <div class="update-gender">
-    <van-picker
-      title="标题"
-      show-toolbar
-      :columns="columns"
-      @confirm="onConfirm"
+  <div class="update-birthday">
+    <van-datetime-picker
+      v-model="currentDate"
+      type="date"
+      title="选择年月日"
+      :min-date="minDate"
+      :max-date="maxDate"
       @cancel="$emit('close')"
-      @change="onPickerChange"
-      :default-index="value"
+      @confirm="onConfirm"
     />
   </div>
 </template>
 
 <script>
 import { updateUserProfile } from '@/api/user'
+import dayjs from 'dayjs'
 export default {
-  name: 'UpdateGender',
+  name: 'UpdateBirthday',
   components: {},
   props: {
     value: {
-      type: Number,
+      type: String,
       required: true
     }
   },
   data() {
     return {
-      columns: ['男', '女'],
-      localGender: this.value
+      minDate: new Date(1970, 0, 1),
+      maxDate: new Date(),
+      currentDate: new Date(this.value)
     }
   },
   computed: {},
@@ -34,10 +36,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    onPickerChange(picker, value, index) {
-      this.localGender = index
-    },
-    // 更改用户性别
+    // 更改用户名
     async onConfirm() {
       this.$toast.loading({
         message: '保存中...',
@@ -45,18 +44,18 @@ export default {
         duration: 0
       })
       try {
-        const localGender = this.localGender
+        const currentDate = dayjs(this.currentDate).format('YYYY-MM-DD')
 
-        await updateUserProfile({ gender: localGender })
+        await updateUserProfile({ birthday: currentDate })
 
         // 更新视图
-        this.$emit('input', localGender)
+        this.$emit('input', currentDate)
         // 关闭弹层
         this.$emit('close')
         // 提示成功
         this.$toast.success('更新成功!')
       } catch (err) {
-        this.$toast.fail('更新用户性别失败!')
+        this.$toast.fail('更新用户生日失败!')
       }
     }
   }
