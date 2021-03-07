@@ -78,10 +78,10 @@
 body {
   background-color: #f5f7f9;
 }
-.van-nav-bar {
+.page-nav-bar {
   background-color: #3296fa;
 }
-.van-nav-bar .van-nav-bar__title,
-.van-nav-bar .van-icon {
+.page-nav-bar .van-nav-bar__title,
+.page-nav-bar .van-icon {
   color: #fff;
 }
