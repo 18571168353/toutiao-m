@@ -8,7 +8,9 @@
       @click-left="$router.back()"
     />
     <!-- /导航栏 -->
-    <van-cell title="头像" is-link>
+    <input type="file" hidden ref="file" @change="onFileChange" />
+
+    <van-cell title="头像" is-link @click="$refs.file.click()">
       <van-image class="avatar" fit="cover" round :src="user.photo" />
     </van-cell>
     <van-cell
@@ -61,6 +63,15 @@
       />
     </van-popup>
     <!-- 编辑生日 -->
+    <!-- 编辑头像 -->
+    <van-popup
+      v-model="isUpdatePhotoShow"
+      position="bottom"
+      style="height:100%"
+    >
+      <update-photo :img="img" @close="isUpdatePhotoShow = false" />
+    </van-popup>
+    <!-- 编辑头像 -->
   </div>
 </template>
 
@@ -69,12 +80,14 @@ import { getUserProfile } from '@/api/user.js'
 import UpdateName from './components/update-name'
 import UpdateGender from './components/update-gender'
 import UpdateBirthday from './components/update-birthday'
+import UpdatePhoto from './components/update-photo'
 export default {
   name: 'UserProfile',
   components: {
     UpdateName,
     UpdateGender,
-    UpdateBirthday
+    UpdateBirthday,
+    UpdatePhoto
   },
   props: {},
   data() {
@@ -82,7 +95,9 @@ export default {
       user: {},
       isUpdateNameShow: false,
       isUpdateGnederShow: false,
-      isUpdateBirthdayShow: false
+      isUpdateBirthdayShow: false,
+      isUpdatePhotoShow: false,
+      img: null
     }
   },
   computed: {},
@@ -99,6 +114,14 @@ export default {
       } catch (err) {
         this.$toast('获取数据失败')
       }
+    },
+    onFileChange() {
+      // 获取文件对象
+      const file = this.$refs.file.files[0]
+      // 基于文件对象获取blob数据
+      this.img = window.URL.createObjectURL(file)
+      this.isUpdatePhotoShow = true
+      this.$refs.file.value = ''
     }
   }
 }
