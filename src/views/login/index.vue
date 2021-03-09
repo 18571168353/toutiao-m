@@ -120,6 +120,7 @@ export default {
         this.$toast.success('登录成功')
         // console.log('登录成功', res)
         // 登录成功
+        this.$store.commit('rmCacheComponents', 'LayoutIndex')
         this.$router.push(this.$route.query.redirect || '/')
       } catch (err) {
         if (err.response.status === 400) {

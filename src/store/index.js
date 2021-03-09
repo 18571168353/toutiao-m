@@ -11,7 +11,8 @@ export default new Vuex.Store({
     // 一个对象,储存当前登录用户信息(token等数据)
     // user: null
     // user: JSON.parse(window.localStorage.getItem(TOKEN_KEY))
-    user: getItem(TOKEN_KEY)
+    user: getItem(TOKEN_KEY),
+    cacheComponents: ['LayoutIndex']
   },
   mutations: {
     setUser(state, data) {
@@ -20,6 +21,16 @@ export default new Vuex.Store({
       // 为了防止数据丢失,我们需要吧数据备份到本地存储
       // window.localStorage.setItem(TOKEN_KEY, JSON.stringify(state.user))
       setItem(TOKEN_KEY, state.user)
+    },
+    rmCacheComponents(state, cmp) {
+      if (!state.cacheComponents.includes(cmp)) {
+        state.cacheComponents.splice(cmp)
+      }
+    },
+    addCacheComponents(state, cmp) {
+      if (!state.cacheComponents.includes(cmp)) {
+        state.cacheComponents.splice(cmp)
+      }
     }
   },
   actions: {},

@@ -1,7 +1,9 @@
 <template>
   <div class="layout-container">
-    <!-- 子路由出口 -->
-    <router-view></router-view>
+    <keep-alive
+      ><!-- 子路由出口 -->
+      <router-view></router-view
+    ></keep-alive>
 
     <!-- 标签导航栏 -->
     <van-tabbar class="layout-tabbar" route>
@@ -38,7 +40,10 @@ export default {
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    // 渲染好之后再次添加缓存
+    this.$store.commit('addCacheComponents', 'LayoutIndex')
+  },
   methods: {}
 }
 </script>

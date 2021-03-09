@@ -60,7 +60,7 @@ export default {
         this.$emit('post-success', data.data)
         this.$toast.success('发布成功!')
       } catch (err) {
-        this.$toast('获取数据失败!')
+        // this.$toast('获取数据失败!')
       }
     }
   }

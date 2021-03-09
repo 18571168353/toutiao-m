@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list">
+  <div class="article-list" ref="articleListRef">
     <!-- 文章列表 -->
     <van-pull-refresh
       v-model="isRefreshLoading"
@@ -52,13 +52,27 @@ export default {
       error: false, // 是否加载失败
       timestamp: null, // 请求下一页数据的时间戳
       isRefreshLoading: false, // 控制下拉刷新的loading状态
-      refreshSuccessText: '' // 更新下拉刷新成功的提示的文本
+      refreshSuccessText: '刷新成功', // 更新下拉刷新成功的提示的文本
+      scrollTop: 0
     }
   },
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    const articleList = this.$refs.articleListRef
+    articleList.onscroll = () => {
+      this.scrollTop = articleList.scrollTop
+    }
+  },
+  activated() {
+    // 从缓存中被激活
+    this.$refs.articleListRef.scrollTop = this.scrollTop
+  },
+  deactivated() {
+    // 从缓存中失去活动
+  },
+
   methods: {
     // 当触发上拉加载更多的时候调用该函数
     async onLoad() {

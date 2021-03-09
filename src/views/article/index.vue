@@ -100,7 +100,7 @@
             @click="isPostShow = true"
             >写评论</van-button
           >
-          <van-icon name="comment-o" :info="totalCommentCount" color="#777" />
+          <van-icon name="comment-o" :badge="totalCommentCount" color="#777" />
           <!-- 收藏 -->
           <collect-article
             class="btn-item"
@@ -122,6 +122,7 @@
         <!-- 评论弹出层 -->
         <van-popup v-model="isPostShow" closeable position="bottom">
           <comment-post
+            v-if="isPostShow"
             :target="article.art_id"
             @post-success="OnPostSuccess"
           />
@@ -219,7 +220,7 @@ export default {
       this.loading = true
       try {
         const { data } = await getArticleById(this.articleId)
-        console.log(data)
+        // console.log(data)
 
         // 模拟失败
         // if (Math.random() > 0.5) {
